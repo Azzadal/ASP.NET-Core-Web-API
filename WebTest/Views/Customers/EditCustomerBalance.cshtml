@@ -1,0 +1,76 @@
+﻿
+@{
+    ViewData["Title"] = "EditCustomerBalance";
+}
+
+<h1>Edit</h1>
+
+<h4>Customer</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form>
+            <div class="form-group">
+                <label for="customerId" class="control-label">ID</label>
+                <input id="customerId" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="balance" class="control-label">Баланс</label>
+                <input id="balance" class="form-control" />
+            </div>
+        </form>
+        <div id="result"></div>
+        <button id="btnDeposit" class="btn btn-primary">Пополнить</button>
+        <button id="btnWithdraw" class="btn btn-primary">Списать</button>
+    </div>
+</div>
+
+<div>
+    <a href="/customers">На главную</a>
+</div>
+
+<script>
+    let btnDeposit = document.getElementById("btnDeposit");
+    let btnWithdraw = document.getElementById("btnWithdraw");
+
+    function depositCustomersBalance() {
+        let balance = parseInt($('#balance').val());
+        $.ajax({
+            url: '/customers/Deposit/' + parseInt($('#customerId').val()),
+            type: 'PUT',
+            data: JSON.stringify(balance),
+            contentType: "application/json;charset=utf-8",
+            success: function (data) {
+                window.location.href = "Index";
+            },
+            error: function () {
+                $('#result').html("Error!");
+            }
+        });
+    }
+
+    function withdrawCustomersBalance() {
+        let balance = parseInt($('#balance').val());
+        $.ajax({
+            url: '/customers/Withdraw/' + parseInt($('#customerId').val()),
+            type: 'PUT',
+            data: JSON.stringify(balance),
+            contentType: "application/json;charset=utf-8",
+            success: function (data) {
+                window.location.href = "Index";
+            },
+            error: function () {
+                $('#result').html("Error!");
+            }
+        });
+    }
+
+    btnDeposit.onclick = function (e) {
+        e.preventDefault();
+        depositCustomersBalance();
+    };
+    btnWithdraw.onclick = function (e) {
+        e.preventDefault();
+        withdrawCustomersBalance();
+    };
+</script>

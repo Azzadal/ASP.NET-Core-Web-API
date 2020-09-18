@@ -1,0 +1,49 @@
+﻿
+@{
+    ViewData["Title"] = "CheckBalance";
+}
+
+<h1>Проверка баланса</h1>
+
+<h4>клиента</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form>
+            <div class="form-group">
+                <label for="customerId" class="control-label">ID</label>
+                <input id="customerId" class="form-control" />
+            </div>
+        </form>
+        <div id="out"></div>
+        <button id="btnCheck" class="btn btn-primary">Проверить</button>
+    </div>
+</div>
+
+<script>
+    let out = document.getElementById("out");
+    let btn = document.getElementById("btnCheck");
+    function getCustomersBalance() {
+        $.ajax({
+            url: '/customers/GetCustomer/' + parseInt($('#customerId').val()),
+            type: 'GET',
+            contentType: "application/json;charset=utf-8",
+            success: function (data) {
+                
+                   // let date = moment(data.dateOfBirth).format('DD-MM-YYYY');
+                out.innerHTML = '<tr><td>' + data.name + '</td><td> </td><td>' + data.balance + '</td></tr>';
+                
+
+            },
+            error: function (x, y, z) {
+                alert(x + '\n' + y + '\n' + z);
+            }
+        });
+    }
+
+    btn.onclick = function (e) {
+        e.preventDefault();
+        getCustomersBalance();
+    };
+</script>
+

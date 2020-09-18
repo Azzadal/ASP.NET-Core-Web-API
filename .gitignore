@@ -1,0 +1,10 @@
+/idea
+/.vs
+/WebTest/bin
+/WebTest/obj
+/WebTest/WebTest.csproj
+/WebTest/WebTest.csproj.user
+/WebTest.Tests/bin
+/WebTest.Tests/obj
+/WebTest.Tests/WebTest.Tests.csproj
+/WebTest.sln

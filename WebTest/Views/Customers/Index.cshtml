@@ -1,0 +1,60 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+
+<p>
+    <a asp-action="Create">Новая запись</a>
+    <a asp-action="CheckBalance">Проверка баланса</a>
+    <a asp-action="EditCustomerBalance">Изменение баланса</a>
+    <a asp-action="DeleteCustomer">Удаление клиента</a>
+</p>
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>
+                ID
+            </th>
+            <th>
+                Имя
+            </th>
+            <th>
+                Фамилия
+            </th>
+            <th>
+                Отчество
+            </th>
+            <th>
+                Дата рождения
+            </th>
+            <th>
+                Баланс
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody id="cust"></tbody>
+</table>
+
+<script>
+    let custTable = document.getElementById("cust");
+    function getCustomersList() {
+        $.ajax({
+            url: '/customers/GetCustomers',
+            type: 'GET',
+            contentType: "application/json;charset=utf-8",
+            success: function (data) {
+                for (var i = 0; i < data.length; i++) {
+                    let date = moment(data[i].dateOfBirth).format('DD-MM-YYYY');
+                    custTable.innerHTML += '<tr><td>' + data[i].id + '</td><td>' + data[i].name + '</td><td>' + data[i].surname + '</td><td>' + data[i].patronymic + '</td><td>' + date + '</td><td>' + data[i].balance + '</td></tr>';
+                }
+            },
+            error: function (x, y, z) {
+                alert(x + '\n' + y + '\n' + z);
+            }
+        });
+    }
+    window.onload = function () {
+        getCustomersList();
+    };
+</script>

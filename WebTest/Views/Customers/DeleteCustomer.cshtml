@@ -1,0 +1,43 @@
+﻿@model WebTest.Models.Customer
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1>Удаление</h1>
+
+<h3>Удаление клиента по ID</h3>
+<div class="row">
+    <div class="col-md-4">
+        <form>
+            <div class="form-group">
+                <label for="customerId" class="control-label">ID</label>
+                <input id="customerId" class="form-control" />
+            </div>
+        </form>
+        <div id="result"></div>
+        <button id="btnDelete" class="btn btn-primary">Удалить</button>
+    </div>
+</div>
+
+<script>
+    let btn = document.getElementById("btnDelete");
+    function deleteCustomerFromId() {
+        $.ajax({
+            url: '/customers/DeleteCustomerFromId/' + parseInt($('#customerId').val()),
+            type: 'DELETE',
+            contentType: "application/json;charset=utf-8",
+            success: function (data) {
+                window.location.href = "Index";
+            },
+            error: function (x, y, z) {
+                $('#result').html("Error!");
+            }
+        });
+    }
+
+    btn.onclick = function (e) {
+        e.preventDefault();
+        deleteCustomerFromId();
+    };
+</script>
