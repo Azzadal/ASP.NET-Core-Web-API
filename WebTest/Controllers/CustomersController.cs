@@ -61,12 +61,15 @@ namespace WebTest.Controllers
         
         public HttpResponseMessage Withdraw(int id, [FromBody] float amount)
         {
-            Customer customer = _context.Customers.Find(id);
-            customer.Balance -= amount;
+            lock (this)
+            {
+                Customer customer = _context.Customers.Find(id);
+                customer.Balance -= amount;
 
-            _context.SaveChanges();
+                _context.SaveChanges();
 
-            return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+                return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+            }
         }
 
         [HttpDelete]

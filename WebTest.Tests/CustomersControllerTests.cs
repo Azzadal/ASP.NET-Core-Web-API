@@ -29,7 +29,8 @@ namespace WebTest.Tests
             int threadCount = 10;
             int customerCount = 50;
             Thread[] threads = new Thread[threadCount];
-            HttpResponseMessage[] results = new HttpResponseMessage[threadCount * customerCount];
+            HttpResponseMessage[] resultsDeposit = new HttpResponseMessage[threadCount * customerCount];
+            HttpResponseMessage[] resultsWithDraw = new HttpResponseMessage[threadCount * customerCount];
             int[] customerIds = new int[customerCount];
             for(int i = 0; i < customerCount; ++i)
             {
@@ -51,7 +52,8 @@ namespace WebTest.Tests
                                     for (int j = 0; j < customerCount; j++)
                                     {
                                         int customerId = customerIds[j];
-                                        results[threadIndex * customerCount + j] = controller.Deposit(customerId, 123);
+                                        resultsDeposit[threadIndex * customerCount + j] = controller.Deposit(customerId, 123);
+                                        resultsWithDraw[threadIndex * customerCount + j] = controller.Withdraw(customerId, 123);
                                     }
                                 }
                                 );
@@ -66,14 +68,18 @@ namespace WebTest.Tests
             {
                 thread.Join();
             }
-            foreach (var result in results)
+            foreach (var result in resultsDeposit)
+            {
+                Assert.Equal(System.Net.HttpStatusCode.OK, result.StatusCode);
+            }
+            foreach (var result in resultsWithDraw)
             {
                 Assert.Equal(System.Net.HttpStatusCode.OK, result.StatusCode);
             }
             foreach (var customerId in customerIds)
             {
                 Customer customer = _context.Customers.Find(customerId);
-                Assert.Equal(123 * threadCount, customer.Balance);
+                Assert.Equal(0, customer.Balance);
             }
         }
     }
