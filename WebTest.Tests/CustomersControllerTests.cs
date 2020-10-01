@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using System.Net.Http;
 using System.Threading;
 using WebTest.Controllers;
@@ -16,6 +17,7 @@ namespace WebTest.Tests
         {
             var options = new DbContextOptionsBuilder<CustomerContext>()
                             .UseInMemoryDatabase(databaseName: "Test")
+                            .ConfigureWarnings(x=>x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
                             .Options;
             _context = new CustomerContext(options);
             controller = new CustomersController(_context);

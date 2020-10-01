@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using WebTest.Models;
 using FromBodyAttribute = Microsoft.AspNetCore.Mvc.FromBodyAttribute;
 using HttpDeleteAttribute = Microsoft.AspNetCore.Mvc.HttpDeleteAttribute;
@@ -49,27 +52,41 @@ namespace WebTest.Controllers
 
         public HttpResponseMessage Deposit(int id, [FromBody] float amount)
         {
-            lock (this) {
-                Customer customer = _context.Customers.Find(id);
-                customer.Balance += amount;
-
-                _context.SaveChanges();
-
-                return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                try
+                {
+                    _context.Database.ExecuteSqlRaw("UPDATE " + "\"Customers\"" + " SET " + "\"Balance\"" + " = " + "\"Balance\"" + " + {0} WHERE " + "\"Id\"" + " = {1}", amount, id);
+                    _context.SaveChanges();
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                }
             }
+
+            return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
         }
         
         public HttpResponseMessage Withdraw(int id, [FromBody] float amount)
         {
-            lock (this)
-            {
-                Customer customer = _context.Customers.Find(id);
-                customer.Balance -= amount;
-
-                _context.SaveChanges();
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                    _context.Database.ExecuteSqlRaw("UPDATE " + "\"Customers\"" + " SET " + "\"Balance\"" +  " = " + "\"Balance\"" + " - {0} WHERE " + "\"Id\"" + " = {1}", amount, id);
+                    _context.SaveChanges();
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                    }
+                }
 
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
-            }
+            
         }
 
         [HttpDelete]
